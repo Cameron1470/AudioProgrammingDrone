@@ -49,8 +49,10 @@ private:
     float T60 = 2.0f;
     /// initialize phase
     float phase = 0.0f;
+    ///
+    int currentSampleIndex = 0;
     /// storing note data
-    juce::Array<float> waveTable;
+    float* waveTable;
     /// length in samples
-    float wtSize = floor(sampleRate * T60);
+    int wtSize = floor(sampleRate * T60);
 };
