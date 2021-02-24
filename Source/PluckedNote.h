@@ -11,7 +11,7 @@
 #pragma once
 
 #include <tgmath.h>
-
+#include <iostream>
  ///  class for playing karplus-strong notes using wavetable methods
 class PluckedNote
 {
@@ -47,6 +47,8 @@ private:
     /// length of note in seconds
     float T60 = 2.0f;
     /// initialize phase
+    float phase = 0.0f;
+    ///
     int currentSampleIndex = 0;
     /// storing note data
     float* waveTable;
