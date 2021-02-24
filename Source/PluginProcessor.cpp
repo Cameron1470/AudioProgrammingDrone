@@ -9,6 +9,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "PluckedNote.h"
+#include <iostream>
 
 //==============================================================================
 ApDroneProjectAudioProcessor::ApDroneProjectAudioProcessor()
@@ -184,12 +185,9 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
 
         //====================================================================================
-        // GENERATIVE KARPLUS-STRONG HIGH NOTES
+        // KARPLUS-STRONG NOTE
 
         float KSNote = gNote.process();
-
-        //====================================================================================
-        // PANNED NOISE BURSTS
 
         //====================================================================================
         // OUTPUT
