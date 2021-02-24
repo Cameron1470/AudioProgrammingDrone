@@ -14,10 +14,10 @@
 #include <math.h>
 #include <ctime>
 
-//=======================================================================
+ //=======================================================================
 PluckedNote::PluckedNote()
 {
-  generateNote();
+    generateNote();
 }
 //=======================================================================
 PluckedNote::~PluckedNote()
@@ -29,8 +29,7 @@ void PluckedNote::generateNote()
     // KARPLUS-STRONG ALGORITHM
 
     // parameter calculation
-    float tau = T60 / log(1000);
-    float rho = exp(-1 / (frequency * tau)) / (abs(cos(2 * M_PI * frequency / sampleRate)));
+    float rho = exp(-1 / (frequency * T60 / log(1000))) / (abs(cos(2 * M_PI * frequency / sampleRate)));
 
     wtSize = floor(sampleRate * T60);               // duration of simulation in samples
 
@@ -40,43 +39,42 @@ void PluckedNote::generateNote()
     float C = (1 - P) / (1 + P);                    // calculate allpass filter coefficient
 
     srand(time(NULL));                              //random seed
-    int inputLength = N + 1;
-    float* v = new float[inputLength];                           //initialize input vector
+    float* v = new float[N + 1];                      //initialize input vector
 
-  // fill input vector with white noise
-  for (int count = 0; count < N + 1; count++)
-  {
-    float randNum = ((rand() % 10001) / 5000.0f) - 1.0f;
-    v[count] = randNum;
-  }
+    // fill input vector with white noise
+    for (int count = 0; count < N + 1; count++)
+    {
+        float randNum = ((rand() % 10001) / 5000.0f) - 1.0f;
+        v[count] = randNum;
+    }
 
-  float x0;
-  float x1 = 0;
-  
-  if (waveTable != nullptr)
-  {
-      delete[] waveTable;
-  }
-  waveTable = new float[wtSize];
+    float x0;
+    float x1 = 0;
 
-  // dynamics filter loop
-  for (int n = 0; n < (N + 1); n++)
-  {
-    x0 = (1 - dynParam) * v[(int)n] + (dynParam * x1);
-    waveTable[n] = x0;
-    x1 = x0;
-  }
+    if (waveTable != nullptr)
+    {
+        delete[] waveTable;
+    }
+    waveTable = new float[wtSize];
 
-  float yp1 = 0;                                // initializing previous output of allpas filter
-  float yp0;                                    // initializing current output of allpass filter
+    // dynamics filter loop
+    for (int n = 0; n < (N + 1); n++)
+    {
+        x0 = (1 - dynParam) * v[(int)n] + (dynParam * x1);
+        waveTable[n] = x0;
+        x1 = x0;
+    }
 
-  // karplus-strong algorithm loop
-  for (int n = (N + 1); n < wtSize; n++)
-  {
-    yp0 = C * (waveTable[int(n - N)] - yp1) + waveTable[int(n - N - 1)];
-    waveTable[n] = (rho / 2) * (yp0 + yp1);
-    yp1 = yp0;
-  }
+    float yp1 = 0;                                // initializing previous output of allpas filter
+    float yp0;                                    // initializing current output of allpass filter
+
+    // karplus-strong algorithm loop
+    for (int n = (N + 1); n < wtSize; n++)
+    {
+        yp0 = C * (waveTable[int(n - N)] - yp1) + waveTable[int(n - N - 1)];
+        waveTable[n] = (rho / 2) * (yp0 + yp1);
+        yp1 = yp0;
+    }
 
 }
 //=============================================================================
@@ -84,14 +82,12 @@ void PluckedNote::generateNote()
 
 float PluckedNote::process()
 {
-  float sample = waveTable[currentSampleIndex];
+    float sample = waveTable[currentSampleIndex];
 
-  currentSampleIndex++;
-  
-  currentSampleIndex++;
-  currentSampleIndex %= wtSize;
+    currentSampleIndex++;
+    currentSampleIndex %= wtSize;
 
-  return sample;
+    return sample;
 
 }
 //=============================================================================
@@ -99,13 +95,13 @@ float PluckedNote::process()
 
 void PluckedNote::setFrequency(float freq)
 {
-  frequency = freq;
+    frequency = freq;
 }
 void PluckedNote::setSampleRate(float SR)
 {
-  sampleRate = SR;
+    sampleRate = SR;
 }
 void PluckedNote::setNoteLength(float noteLength)
 {
-  T60 = noteLength;
+    T60 = noteLength;
 }

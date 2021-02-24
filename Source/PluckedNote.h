@@ -1,10 +1,10 @@
 /*
  ==============================================================================
- 
+
  PluckedNote.h
  Created: 23 Feb 2021 6:04:44pm
  Author:  csmit
- 
+
  ==============================================================================
  */
 
@@ -12,32 +12,31 @@
 
 #include <tgmath.h>
 
-
-/// <#Description#>
+ ///  class for playing karplus-strong notes using wavetable methods
 class PluckedNote
 {
-public:    
+public:
     PluckedNote();
     ~PluckedNote();
-    
+
     //=============================================================================
-    /// <#Description#>
+    /// generate wavetable for class parameters
     void generateNote();
-    /// <#Description#>
+    /// return next value from the wavetable
     float process();
     //=============================================================================
 #pragma mark getters and setters
-    
-    /// <#Description#>
-    /// @param freq <#freq description#>
+
+    /// setter function for frequency
+    /// @param freq, frequency of output note
     void setFrequency(float freq);
-    /// <#Description#>
-    /// @param SR <#SR description#>
+    /// setter function for sample rate
+    /// @param SR, sample rate in Hz
     void setSampleRate(float SR);
-    /// <#Description#>
-    /// @param noteLength <#noteLength description#>
+    /// Time for note to decay
+    /// @param noteLength, note length in seconds
     void setNoteLength(float noteLength);
-    
+
 private:
     /// frequency of plucked note variable
     float frequency = 440.0f;

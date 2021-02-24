@@ -185,7 +185,7 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
 
         //====================================================================================
-        // GENERATIVE KARPLUS-STRONG HIGH NOTES
+        // KARPLUS-STRONG NOTE
 
         float KSNote = gNote.process();
 
