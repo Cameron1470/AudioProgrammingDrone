@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="bO6TPu" name="apDroneProject" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              jucerVersion="5.4.7">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="ZQzyaZ" name="apDroneProject">
     <GROUP id="{5D84CC64-FA82-AEBB-5782-02B2AACFC7FA}" name="Source">
       <FILE id="tR502Y" name="PluginProcessor.cpp" compile="1" resource="0"
