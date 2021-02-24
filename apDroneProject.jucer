@@ -13,6 +13,7 @@
       <FILE id="qZ2Yh6" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="g6AYzh" name="Oscillators.h" compile="0" resource="0" file="Source/Oscillators.h"/>
       <FILE id="CjWoqI" name="PluckedNote.h" compile="0" resource="0" file="Source/PluckedNote.h"/>
+      <FILE id="ppwXO3" name="PluckedNote.cpp" compile="1" resource="0" file="Source/PluckedNote.cpp"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>

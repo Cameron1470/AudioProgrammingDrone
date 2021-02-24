@@ -11,7 +11,7 @@
 #pragma once
 
 #include <tgmath.h>
-#include <JuceHeader.h>
+
 
 /// <#Description#>
 class PluckedNote
@@ -48,9 +48,9 @@ private:
     /// length of note in seconds
     float T60 = 2.0f;
     /// initialize phase
-    float phase = 0.0f;
+    int currentSampleIndex = 0;
     /// storing note data
-    juce::Array<float> waveTable;
+    float* waveTable;
     /// length in samples
-    float wtSize = floor(sampleRate * T60);
+    int wtSize = floor(sampleRate * T60);
 };

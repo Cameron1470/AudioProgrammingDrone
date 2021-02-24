@@ -8,7 +8,12 @@
    ==============================================================================
  */
 
-#include "PluckedNote.cpp"
+#define _USE_MATH_DEFINES
+#include "PluckedNote.h"
+#include <iostream>
+#include <math.h>
+#include <ctime>
+
 //=======================================================================
 PluckedNote::PluckedNote()
 {
@@ -20,66 +25,71 @@ PluckedNote::~PluckedNote()
 //=======================================================================
 void PluckedNote::generateNote()
 {
-  //=======================================================================
-  // KARPLUS-STRONG ALGORITHM
+    //=======================================================================
+    // KARPLUS-STRONG ALGORITHM
 
-  // parameter calculation
-  float rho = exp(-1 / ((float)frequency * T60 / log(1000))) / (abs(cos(2 * juce::double_Pi * frequency / sampleRate)));
+    // parameter calculation
+    float tau = T60 / log(1000);
+    float rho = exp(-1 / (frequency * tau)) / (abs(cos(2 * M_PI * frequency / sampleRate)));
 
-  wtSize = floor(sampleRate * T60);               // duration of simulation in samples
+    wtSize = floor(sampleRate * T60);               // duration of simulation in samples
 
-  float Nexact = (sampleRate / frequency) - 0.5f;   // ideal number of samples in delay line
-  float N = floor(Nexact);                        // truncated delay line length
-  float P = Nexact - N;                           // fractional delay length
-  float C = (1 - P) / (1 + P);                    // calculate allpass filter coefficient
+    float Nexact = (sampleRate / frequency) - 0.5f; // ideal number of samples in delay line
+    float N = floor(Nexact);                        // truncated delay line length
+    float P = Nexact - N;                           // fractional delay length
+    float C = (1 - P) / (1 + P);                    // calculate allpass filter coefficient
 
-  srand((unsigned)time(0));                       //random seed
-  juce::Array<float> v;                           //initialize input vector
+    srand(time(NULL));                              //random seed
+    int inputLength = N + 1;
+    float* v = new float[inputLength];                           //initialize input vector
 
   // fill input vector with white noise
   for (int count = 0; count < N + 1; count++)
   {
     float randNum = ((rand() % 10001) / 5000.0f) - 1.0f;
-    v.insert(count, randNum);
+    v[count] = randNum;
   }
 
-  int x0;
-  int x1 = 0;
-  juce::Array<float> y;
+  float x0;
+  float x1 = 0;
+  
+  if (waveTable != nullptr)
+  {
+      delete[] waveTable;
+  }
+  waveTable = new float[wtSize];
 
   // dynamics filter loop
   for (int n = 0; n < (N + 1); n++)
   {
-    x0 = (1 - dynParam) * v[(int) n] + (dynParam * x1);
-    y.insert(n, x0);
+    x0 = (1 - dynParam) * v[(int)n] + (dynParam * x1);
+    waveTable[n] = x0;
     x1 = x0;
   }
 
-  int yp1 = 0;                                // initializing previous output of allpas filter
-  int yp0;                                    // initializing current output of allpass filter
+  float yp1 = 0;                                // initializing previous output of allpas filter
+  float yp0;                                    // initializing current output of allpass filter
 
   // karplus-strong algorithm loop
   for (int n = (N + 1); n < wtSize; n++)
   {
-    yp0 = C * (y[int(n - N)] - yp1) + y[int(n - N - 1)];
-    y.insert(n, (rho / 2) * (yp0 + yp1));
+    yp0 = C * (waveTable[int(n - N)] - yp1) + waveTable[int(n - N - 1)];
+    waveTable[n] = (rho / 2) * (yp0 + yp1);
     yp1 = yp0;
   }
 
-  // store generated note data in private variable
-  waveTable = y;
 }
 //=============================================================================
 // PROCESS FUNCTION
 
 float PluckedNote::process()
 {
-  float sample = waveTable[(int)phase];
+  float sample = waveTable[currentSampleIndex];
 
-  phase += 1.0f;
-
-  if (phase > wtSize)
-    phase = 0.0f;
+  currentSampleIndex++;
+  
+  currentSampleIndex++;
+  currentSampleIndex %= wtSize;
 
   return sample;
 
