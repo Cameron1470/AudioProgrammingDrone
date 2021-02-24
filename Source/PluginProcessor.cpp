@@ -194,8 +194,8 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
         //====================================================================================
         // OUTPUT
 
-        leftChannel[i] = (bassMaster + KSNote) * gain;
-        rightChannel[i] = (bassMaster + KSNote) * gain;
+        leftChannel[i] = (KSNote) * gain;
+        rightChannel[i] = (KSNote) * gain;
 
         //leftChannel[i] = KSNote * gain;
         //rightChannel[i] = KSNote * gain;
