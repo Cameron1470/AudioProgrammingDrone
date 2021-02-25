@@ -52,7 +52,8 @@ void PluckedNote::generateNote()
     }
     waveTable = new float[wtSize];
 
-    // dynamics filter loop    
+    // dynamics filter loop
+    float record = 0.0f;
     for (int n = 0; n < (N + 1); n++)
     {
         x0 = (1 - dynParam) * v[n] + (dynParam * x1);
@@ -71,6 +72,18 @@ void PluckedNote::generateNote()
         waveTable[n] = (rho * 0.5f) * (yp0 + yp1);
         yp1 = yp0;
     }
+    std::cout << "rho:\t" << rho << '\n';
+    std::cout << "wtSize:\t" << wtSize << '\n';
+    std::cout << "Nexact:\t" << Nexact << '\n';
+    std::cout << "N:\t\t" << N << '\n';
+    std::cout << "P:\t\t" << P << '\n';
+    std::cout << "C:\t\t" << C << '\n';
+    std::cout << "yp1:\t" << yp1 << '\n';
+    std::cout << "yp0:\t" << yp0 << '\n';
+    std::cout << "x1:\t\t" << x1 << '\n';
+    std::cout << "x0:\t\t" << x0 << '\n';
+    std::cout << "New Record: " << record << '\n';
+
 }
 //=============================================================================
 // PROCESS FUNCTION

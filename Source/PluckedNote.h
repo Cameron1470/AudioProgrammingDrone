@@ -11,7 +11,7 @@
 #pragma once
 
 #include <tgmath.h>
-#include <iostream>
+
  ///  class for playing karplus-strong notes using wavetable methods
 class PluckedNote
 {
