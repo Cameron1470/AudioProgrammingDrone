@@ -60,7 +60,7 @@ private:
     TriOsc bassOscOne;
     SinOsc bassOscTwo;
 
-    float gain = 0.5f;
+    float gain = 0.2f;
 
     SinOsc ampModOne;
     TriOsc ampModTwo;

@@ -192,15 +192,16 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
 
         //====================================================================================
-        // KARPLUS-STRONG NOTE
+        // GENERATIVE KARPLUS-STRONG NOTE
 
         float genPlucks = pluckedNotes.processChord();
+        
 
         //====================================================================================
         // OUTPUT
 
-        leftChannel[i] =  genPlucks + bassMaster * gain;
-        rightChannel[i] =  genPlucks + bassMaster * gain;
+        leftChannel[i] = genPlucks + bassMaster * gain;
+        rightChannel[i] = genPlucks + bassMaster * gain;
     }
 }
 

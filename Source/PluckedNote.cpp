@@ -110,3 +110,22 @@ void PluckedNote::setNoteLength(float noteLength)
 {
     T60 = noteLength;
 }
+
+//===============================================================================
+// GETTER FUNCTIONs
+
+int PluckedNote::getCurrentSampleIndex()
+{
+    return currentSampleIndex;
+}
+
+int PluckedNote::getWtSize()
+{
+    return wtSize;
+}
+
+float PluckedNote::getSampleRate()
+{
+    return sampleRate;
+}
+

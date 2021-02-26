@@ -44,8 +44,13 @@ private:
     int noteCount = 5;
 
     float* frequencies = new float[noteCount];
+    bool* noteStatus = new bool[noteCount];
+    float* pause = new float[noteCount];
+    float* timeStop = new float[noteCount];
 
     float sumSample = 0;
+
+    juce::Random chance;
 
 };
 

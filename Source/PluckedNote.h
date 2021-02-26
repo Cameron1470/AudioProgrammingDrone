@@ -38,6 +38,15 @@ public:
     /// @param noteLength, note length in seconds
     void setNoteLength(float noteLength);
 
+    /// Get current sample index
+    int getCurrentSampleIndex();
+
+    /// Get wtsize
+    int getWtSize();
+
+    /// Get sample rate
+    float getSampleRate();
+
 private:
     /// frequency of plucked note variable
     float frequency = 440.0f;
