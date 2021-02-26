@@ -67,6 +67,8 @@ private:
 
     GenerativePlucks pluckedNotes;
 
+    juce::Reverb pluckedVerb;
+    juce::Reverb::Parameters pluckedVerbParams;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ApDroneProjectAudioProcessor)

@@ -17,7 +17,7 @@ GenerativePlucks::GenerativePlucks()
         plucks.push_back(PluckedNote());
         noteStatus[plucksIndex] = false;
         pause[plucksIndex] = 0.0f;
-        timeStop[plucksIndex] = chance.nextFloat() * 3.0f * 48000.0f;
+        timeStop[plucksIndex] = chance.nextFloat() * 6.0f * 48000.0f;
         
     }
 

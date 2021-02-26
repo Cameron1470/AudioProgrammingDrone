@@ -119,6 +119,13 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
     pluckedNotes.setMidiNotes(midiNoteValues);
     pluckedNotes.setNoteLength(2.0f);
     pluckedNotes.generateNotes();
+
+    pluckedVerbParams.dryLevel = 0.5f;
+    pluckedVerbParams.wetLevel = 0.5f;
+    pluckedVerbParams.roomSize = 0.99f;
+    pluckedVerb.setParameters(pluckedVerbParams);
+    pluckedVerb.reset();
+
     
 
     
@@ -175,33 +182,43 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
     float* leftChannel = buffer.getWritePointer(0);
     float* rightChannel = buffer.getWritePointer(1);
 
+    //float* reverbLeft = buffer.getWritePointer(0);
+    //float* reverbRight = buffer.getWritePointer(1);
+
     //DSP LOOP!
+    for (int i = 0; i < numSamples; i++)
+    {
+        //====================================================================================
+        // GENERATIVE KARPLUS-STRONG NOTE
+
+        float genPlucks = pluckedNotes.processChord();
+
+
+        //====================================================================================
+        // OUTPUT
+
+        leftChannel[i] = genPlucks;
+        rightChannel[i] = genPlucks;   
+    }
+
+    pluckedVerb.processStereo(leftChannel, rightChannel, numSamples);
+
     for (int i = 0; i < numSamples; i++)
     {
         //===================================================================================
         // BASS DRONE
-        
+
         // time step the modulator variables
         float modOne = ampModOne.process();
         float modTwo = ampModTwo.process();
 
         // modulate
         bassOscOne.setFrequency(juce::MidiMessage::getMidiNoteInHertz(48.0f) + 3.0 * modTwo);
-        
+
         float bassMaster = modOne * bassOscOne.process() + modTwo * bassOscTwo.process();
 
-
-        //====================================================================================
-        // GENERATIVE KARPLUS-STRONG NOTE
-
-        float genPlucks = pluckedNotes.processChord();
-        
-
-        //====================================================================================
-        // OUTPUT
-
-        leftChannel[i] = genPlucks + bassMaster * gain;
-        rightChannel[i] = genPlucks + bassMaster * gain;
+        leftChannel[i] += bassMaster * gain;
+        rightChannel[i] += bassMaster * gain;
     }
 }
 
