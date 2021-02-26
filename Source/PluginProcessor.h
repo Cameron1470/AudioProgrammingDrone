@@ -10,7 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Oscillators.h"
-#include "PluckedNote.h"
+#include "GenerativePlucks.h"
 
 //==============================================================================
 /**
@@ -65,7 +65,7 @@ private:
     SinOsc ampModOne;
     TriOsc ampModTwo;
 
-    PluckedNote gNote;
+    GenerativePlucks pluckedNotes;
 
 
     //==============================================================================

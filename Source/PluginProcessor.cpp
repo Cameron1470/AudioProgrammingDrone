@@ -8,7 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "PluckedNote.h"
+#include "GenerativePlucks.h"
 #include <iostream>
 
 //==============================================================================
@@ -108,11 +108,18 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
 
     //===================================================================================
     // Plucked Notes Initializing
+    float* midiNoteValues = new float[5];
+    midiNoteValues[0] = 63.0f;
+    midiNoteValues[1] = 67.0f;
+    midiNoteValues[2] = 70.0f;
+    midiNoteValues[3] = 74.0f;
+    midiNoteValues[4] = 79.0f;
 
-    gNote.setFrequency(440.0f);
-    gNote.setNoteLength(2.0f);
-    gNote.setSampleRate(sampleRate);
-    gNote.generateNote();
+    pluckedNotes.setSampleRate(sampleRate);
+    pluckedNotes.setMidiNotes(midiNoteValues);
+    pluckedNotes.setNoteLength(2.0f);
+    pluckedNotes.generateNotes();
+    
 
     
 }
@@ -187,16 +194,13 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
         //====================================================================================
         // KARPLUS-STRONG NOTE
 
-        float KSNote = gNote.process();
+        float genPlucks = pluckedNotes.process() * 0.1f;
 
         //====================================================================================
         // OUTPUT
 
-        leftChannel[i] = (KSNote) * gain;
-        rightChannel[i] = (KSNote) * gain;
-
-        //leftChannel[i] = KSNote * gain;
-        //rightChannel[i] = KSNote * gain;
+        leftChannel[i] = (genPlucks + bassMaster) * gain;
+        rightChannel[i] = (genPlucks + bassMaster) * gain;
     }
 }
 

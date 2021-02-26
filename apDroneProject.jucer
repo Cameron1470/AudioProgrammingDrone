@@ -14,6 +14,10 @@
       <FILE id="g6AYzh" name="Oscillators.h" compile="0" resource="0" file="Source/Oscillators.h"/>
       <FILE id="CjWoqI" name="PluckedNote.h" compile="0" resource="0" file="Source/PluckedNote.h"/>
       <FILE id="mjwXiT" name="PluckedNote.cpp" compile="1" resource="0" file="Source/PluckedNote.cpp"/>
+      <FILE id="eOxBcf" name="GenerativePlucks.cpp" compile="1" resource="0"
+            file="Source/GenerativePlucks.cpp"/>
+      <FILE id="HM2J6z" name="GenerativePlucks.h" compile="0" resource="0"
+            file="Source/GenerativePlucks.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
