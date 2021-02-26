@@ -23,13 +23,13 @@ public:
     /// generate wavetables for all plucked note types
     void generateNotes();
     /// return next value
-    float process();
+    float processChord();
     //=============================================================================
 #pragma mark getters and setters
 
     /// setter function for frequency
     /// @param freq, frequency of output note
-    void setMidiNotes(float* midiNoteValues);
+    void setMidiNotes(int* midiNoteValues);
     /// setter function for sample rate
     /// @param SR, sample rate in Hz
     void setSampleRate(float SR);
@@ -43,7 +43,9 @@ private:
     /// number of note that make up the vector
     int noteCount = 5;
 
-    float* frequencies;
+    float* frequencies = new float[noteCount];
+
+    float sumSample = 0;
 
 };
 

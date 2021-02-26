@@ -108,12 +108,12 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
 
     //===================================================================================
     // Plucked Notes Initializing
-    float* midiNoteValues = new float[5];
-    midiNoteValues[0] = 63.0f;
-    midiNoteValues[1] = 67.0f;
-    midiNoteValues[2] = 70.0f;
-    midiNoteValues[3] = 74.0f;
-    midiNoteValues[4] = 79.0f;
+    int* midiNoteValues = new int[5];
+    midiNoteValues[0] = 51;
+    midiNoteValues[1] = 55;
+    midiNoteValues[2] = 58;
+    midiNoteValues[3] = 62;
+    midiNoteValues[4] = 67;
 
     pluckedNotes.setSampleRate(sampleRate);
     pluckedNotes.setMidiNotes(midiNoteValues);
@@ -194,13 +194,13 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
         //====================================================================================
         // KARPLUS-STRONG NOTE
 
-        float genPlucks = pluckedNotes.process() * 0.1f;
+        float genPlucks = pluckedNotes.processChord();
 
         //====================================================================================
         // OUTPUT
 
-        leftChannel[i] = (genPlucks + bassMaster) * gain;
-        rightChannel[i] = (genPlucks + bassMaster) * gain;
+        leftChannel[i] =  genPlucks + bassMaster * gain;
+        rightChannel[i] =  genPlucks + bassMaster * gain;
     }
 }
 

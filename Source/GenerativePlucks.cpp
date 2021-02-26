@@ -12,10 +12,12 @@
 
 GenerativePlucks::GenerativePlucks()
 {
-    for (int plucksIndex = 0; plucksIndex < 5; plucksIndex++)
+    for (int plucksIndex = 0; plucksIndex < noteCount; plucksIndex++)
     {
         plucks.push_back(PluckedNote());
     }
+
+
 }
 //=======================================================================
 GenerativePlucks::~GenerativePlucks()
@@ -31,26 +33,27 @@ void GenerativePlucks::generateNotes()
 
 //=============================================================================
 // PROCESS FUNCTION
-float GenerativePlucks::process()
+float GenerativePlucks::processChord()
 {
-    float sample;
+    sumSample = 0;
     
-    for (int i = 0; i < noteCount; ++i)
+    for (int i = 0; i < 5; ++i)
     {
-        sample += plucks[i].process();
+        sumSample += plucks[i].process() / noteCount;
     }
 
-    return sample;
+    return sumSample;
 }
 
 //=============================================================================
 // SETTER FUNCTIONS
 
-void GenerativePlucks::setMidiNotes(float* midiNoteValues)
+void GenerativePlucks::setMidiNotes(int* midiNoteValues)
 {
     for (int i = 0; i < noteCount; ++i)
     {
-        frequencies[i] = juce::MidiMessage::getMidiNoteInHertz(midiNoteValues[i]);
+        frequencies[i] = float(juce::MidiMessage::getMidiNoteInHertz(midiNoteValues[i]));
+        plucks[i].setFrequency(frequencies[i]);
     }
     
 }
