@@ -56,40 +56,76 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    //==========================================
+    // Bass Oscillator Variables
 
+    /// Bass oscillator one, triangle shape
     TriOsc bassOscOne;
-    SinOsc bassOscTwo;
 
-    float gain = 0.3f;
+    /// Bass oscillator two, sinusoidal shape
+    SinOsc bassOscTwo;              
 
-    SinOsc ampModOne;
-    TriOsc ampModTwo;
+    /// Gain value used for reducing volume
+    float gain = 0.3f;              
+
+    /// Amplitude modulator one, sinusoidal shape
+    SinOsc ampModOne;            
+
+    /// Amplitude modulator two, triangle shaped
+    TriOsc ampModTwo;               
     
-    // Plucked Notes
+    //==========================================
+    // Plucked Note Variables
 
-    GenerativePlucks pluckedNotes;
+    /// Generates random plucked notes from Karplus-Strong
+    GenerativePlucks pluckedNotes;  
     
-    juce::Reverb pluckedVerb;
+    /// Reverb for use on plucked notes
+    juce::Reverb pluckedVerb;    
+
+    /// Stored parameters for reverb on plucked notes
     juce::Reverb::Parameters pluckedVerbParams;
 
-    // Swells
+    /// Gain reduction of Karplus-Strong Notes
+    float ksGain = 0.6f;
 
+    //==========================================
+    // Swell Variables
+
+    /// Swell one, vector of sinusoidal oscillators
     std::vector<SinOsc> swellOne;
+
+    /// Swell two, vector of square oscillators
     std::vector<SquareOsc> swellTwo;
+
+    /// Swell three, vector of sinusoidal oscillators
     std::vector<SinOsc> swellThree;
+
+    /// Number of components to each swell vector
     int swellComponents = 3;
 
     std::vector<SinOsc> swellTwoPhaseMod;
 
+    /// Swell amplitude modulation of left channel, sine squared shape
     SinSqOsc swellAmpLeft;
+
+    /// Swell amplitude modulation of right channel, sine squared shape
     SinSqOsc swellAmpRight;
+
+    /// Modulation of amplitude modulation frequency, triangle shaped
     TriOsc swellAmpMod;
 
-    // Fade In
+    //==========================================
+    // Fade In Variables
 
-    int fadeCounter = 0;
-    float fadeLength = 20.0f;
-    int fadeLengthInSamples;
+    /// Counter for fade in duration
+    int fadeCounter = 0;   
+
+    /// Length of fade in (in seconds)
+    float fadeLength = 20.0f;     
+
+    /// Length of fade in (in samples, calculated with sample rate)
+    int fadeLengthInSamples;                
 
 
     //==============================================================================

@@ -89,6 +89,15 @@ class SinSqOsc : public Phasor
 };
 
 //CHILD class
+//class Sin12Osc : public Phasor
+//{
+//	float output(float p) override
+//	{
+//		return pow(std::sin(p * 2.0 * 3.141592653), 12);
+//	}
+//};
+
+//CHILD class
 class SquareOsc : public Phasor
 {
 	float output(float p) override

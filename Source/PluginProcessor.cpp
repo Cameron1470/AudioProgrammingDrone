@@ -115,7 +115,7 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
 
     //===================================================================================
     // Plucked Notes Initializing
-    int* midiNoteValues = new int[5];
+    int* midiNoteValues = new int[10];
     midiNoteValues[0] = 51;
     midiNoteValues[1] = 55;
     midiNoteValues[2] = 58;
@@ -124,7 +124,7 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
 
     pluckedNotes.setSampleRate(sampleRate);
     pluckedNotes.setMidiNotes(midiNoteValues);
-    pluckedNotes.setNoteLength(2.0f);
+    pluckedNotes.setNoteLength(5.0f);
     pluckedNotes.generateNotes();
 
     pluckedVerbParams.dryLevel = 0.5f;
@@ -209,74 +209,88 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    int numSamples = buffer.getNumSamples();
-    float* leftChannel = buffer.getWritePointer(0);
-    float* rightChannel = buffer.getWritePointer(1);
+    //=====================================================================================================
 
-    //float* reverbLeft = buffer.getWritePointer(0);
-    //float* reverbRight = buffer.getWritePointer(1);
 
-    //DSP LOOP!
+
+    int numSamples = buffer.getNumSamples();            // store the number of sample in buffer
+    float* leftChannel = buffer.getWritePointer(0);     // float pointer for writing to left channel
+    float* rightChannel = buffer.getWritePointer(1);    // float pointer for writing to right channel
+
+    //==============================================
+    // DSP LOOP (with reverb)!
     for (int i = 0; i < numSamples; i++)
     {
-        //====================================================================================
-        // GENERATIVE KARPLUS-STRONG NOTE
+        //==========================================
+        // GENERATIVE KARPLUS-STRONG NOTES (RANDOM BEHAVIOUR)
 
-        float genPlucks = pluckedNotes.processChord();
+        float genPlucks = pluckedNotes.processChord();  // get next sample of plucked notes
 
-
-        //====================================================================================
-        // OUTPUT
-
-        leftChannel[i] = genPlucks * 0.8f;
-        rightChannel[i] = genPlucks * 0.8f;   
+        leftChannel[i] = genPlucks * ksGain;            // add to left channel with gain reduction
+        rightChannel[i] = genPlucks * ksGain;           // add to right channel with gain redution
     }
 
+    // apply reverb only to the plucked note sounds
     pluckedVerb.processStereo(leftChannel, rightChannel, numSamples);
 
+
+    //==============================================
+    // DSP LOOP (without reverb!)
     for (int i = 0; i < numSamples; i++)
     {
-        //===================================================================================
+        //==========================================
         // BASS DRONE
 
-        // time step the modulator variables
-        float modOne = ampModOne.process();
-        float modTwo = ampModTwo.process();
+        float modOne = ampModOne.process();             // get next sample of amplitude modulator one
+        float modTwo = ampModTwo.process();             // get next sample of amplitude modulator two
 
-        // modulate
+        // Modulate frequency of bass oscillator one
         bassOscOne.setFrequency(juce::MidiMessage::getMidiNoteInHertz(48.0f) + 3.0 * modTwo);
 
+        // Combine two bass note into master variable
         float bassMaster = modOne * bassOscOne.process() + modTwo * bassOscTwo.process();
 
 
+        //==========================================
+        // STEREO SWELLS
 
-        // SWELLS
-        float leftSwellSum = 0.0f;
-        float rightSwellSum = 0.0f;
+        float leftSwellSum = 0.0f;                      // initialize left channel swell sum float
+        float rightSwellSum = 0.0f;                     // initialize right channel swell sum float
 
+        // loop over all components of the vectors
         for (int i = 0; i < swellComponents; i++)
         {
+            // left channel just takes values from first and seconds swell oscilattor vectors
             leftSwellSum += (swellOne[i].process() + swellTwo[i].process()) / 2.0f;
+
+            // right channel just takes values from second and thirds swell oscillator vectors
             rightSwellSum += (swellTwo[i].process() + swellThree[i].process()) / 2.0f;
         }
 
+        // update frequencies of amplitude modulation for both channels (notice different peak frequencies!)
         swellAmpLeft.setFrequency(0.01f + 0.99f * (0.25 + swellAmpMod.process()));
         swellAmpRight.setFrequency(0.01f + 0.90f * (0.25 + swellAmpMod.process()));
+        
+        // modulate amplitudes of both channels
         leftSwellSum *= swellAmpLeft.process() * 0.05f;
         rightSwellSum *= swellAmpRight.process() * 0.05f;
 
+        // add bass and panned swells to the channel pointers
         leftChannel[i] += (bassMaster + leftSwellSum) * gain;
         rightChannel[i] += (bassMaster + rightSwellSum) * gain;
 
-
+        //==========================================
         // FADE IN
 
+        // will only be used for the initial fade time specified
         if (fadeCounter < fadeLengthInSamples)
         {
+            // calculate current volume as a ratio of counter to length
             float fadeVolume = float(fadeCounter) / float(fadeLengthInSamples);
-            leftChannel[i] *= fadeVolume;
-            rightChannel[i] *= fadeVolume;
-            fadeCounter++;
+
+            leftChannel[i] *= fadeVolume;       // apply fade in to left channel
+            rightChannel[i] *= fadeVolume;      // apply fade in to right channel
+            fadeCounter++;                      // add 1 to counter
         }
 
     }
