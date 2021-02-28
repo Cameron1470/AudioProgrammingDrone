@@ -17,7 +17,7 @@ GenerativePlucks::GenerativePlucks()
         plucks.push_back(PluckedNote());
         noteStatus[plucksIndex] = false;
         pause[plucksIndex] = 0.0f;
-        timeStop[plucksIndex] = chance.nextFloat() * 6.0f * 48000.0f;
+        timeStop[plucksIndex] = chance.nextFloat() * 8.0f * 48000.0f;
         
     }
 
@@ -48,7 +48,7 @@ float GenerativePlucks::processChord()
             if ((plucks[i].getCurrentSampleIndex() + 2) > plucks[i].getWtSize())
             {
                 noteStatus[i] = false;
-                timeStop[i] = chance.nextFloat() * 3 * plucks[i].getSampleRate();
+                timeStop[i] = chance.nextFloat() * 6.0f * plucks[i].getSampleRate();
             }
         }
 

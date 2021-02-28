@@ -24,6 +24,13 @@ ApDroneProjectAudioProcessor::ApDroneProjectAudioProcessor()
                        )
 #endif
 {
+    for (int i = 0; i < swellComponents; ++i)
+    {
+        swellOne.push_back(SinOsc());
+        swellTwo.push_back(SquareOsc());
+        swellThree.push_back(SinOsc());
+        swellTwoPhaseMod.push_back(SinOsc());
+    }
 }
 
 ApDroneProjectAudioProcessor::~ApDroneProjectAudioProcessor()
@@ -122,12 +129,36 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
 
     pluckedVerbParams.dryLevel = 0.5f;
     pluckedVerbParams.wetLevel = 0.5f;
-    pluckedVerbParams.roomSize = 0.99f;
+    pluckedVerbParams.roomSize = 0.9f;
     pluckedVerb.setParameters(pluckedVerbParams);
     pluckedVerb.reset();
 
+    //====================================================================================
+    // Swell Initializing
     
+    for (int i = 0; i < swellComponents; ++i)
+    {
+        swellOne[i].setSampleRate(sampleRate);
+        swellOne[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(36.0f) + ((float)-0.25f * (float)i));
+        swellTwo[i].setSampleRate(sampleRate);
+        swellTwo[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(55.0f) + ((float)-1.0f * (float)i));
+        swellThree[i].setSampleRate(sampleRate);
+        swellThree[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(24.0f) + ((float)-0.125f * (float)i));
+        
+        swellTwoPhaseMod[i].setSampleRate(sampleRate);
+    }
 
+    swellAmpLeft.setSampleRate(sampleRate);
+    swellAmpRight.setSampleRate(sampleRate);
+
+    swellAmpMod.setSampleRate(sampleRate);
+
+    swellAmpMod.setFrequency(1.0f / 480.0f);
+    swellAmpMod.setPhase(0.5f);
+
+    // Fade In Initializing
+
+    fadeLengthInSamples = float(sampleRate * fadeLength);
     
 }
 
@@ -197,8 +228,8 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
         //====================================================================================
         // OUTPUT
 
-        leftChannel[i] = genPlucks;
-        rightChannel[i] = genPlucks;   
+        leftChannel[i] = genPlucks * 0.8f;
+        rightChannel[i] = genPlucks * 0.8f;   
     }
 
     pluckedVerb.processStereo(leftChannel, rightChannel, numSamples);
@@ -217,8 +248,37 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
         float bassMaster = modOne * bassOscOne.process() + modTwo * bassOscTwo.process();
 
-        leftChannel[i] += bassMaster * gain;
-        rightChannel[i] += bassMaster * gain;
+
+
+        // SWELLS
+        float leftSwellSum = 0.0f;
+        float rightSwellSum = 0.0f;
+
+        for (int i = 0; i < swellComponents; i++)
+        {
+            leftSwellSum += (swellOne[i].process() + swellTwo[i].process()) / 2.0f;
+            rightSwellSum += (swellTwo[i].process() + swellThree[i].process()) / 2.0f;
+        }
+
+        swellAmpLeft.setFrequency(0.01f + 0.99f * (0.25 + swellAmpMod.process()));
+        swellAmpRight.setFrequency(0.01f + 0.90f * (0.25 + swellAmpMod.process()));
+        leftSwellSum *= swellAmpLeft.process() * 0.05f;
+        rightSwellSum *= swellAmpRight.process() * 0.05f;
+
+        leftChannel[i] += (bassMaster + leftSwellSum) * gain;
+        rightChannel[i] += (bassMaster + rightSwellSum) * gain;
+
+
+        // FADE IN
+
+        if (fadeCounter < fadeLengthInSamples)
+        {
+            float fadeVolume = float(fadeCounter) / float(fadeLengthInSamples);
+            leftChannel[i] *= fadeVolume;
+            rightChannel[i] *= fadeVolume;
+            fadeCounter++;
+        }
+
     }
 }
 

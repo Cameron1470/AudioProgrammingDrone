@@ -60,15 +60,37 @@ private:
     TriOsc bassOscOne;
     SinOsc bassOscTwo;
 
-    float gain = 0.2f;
+    float gain = 0.3f;
 
     SinOsc ampModOne;
     TriOsc ampModTwo;
+    
+    // Plucked Notes
 
     GenerativePlucks pluckedNotes;
-
+    
     juce::Reverb pluckedVerb;
     juce::Reverb::Parameters pluckedVerbParams;
+
+    // Swells
+
+    std::vector<SinOsc> swellOne;
+    std::vector<SquareOsc> swellTwo;
+    std::vector<SinOsc> swellThree;
+    int swellComponents = 3;
+
+    std::vector<SinOsc> swellTwoPhaseMod;
+
+    SinSqOsc swellAmpLeft;
+    SinSqOsc swellAmpRight;
+    TriOsc swellAmpMod;
+
+    // Fade In
+
+    int fadeCounter = 0;
+    float fadeLength = 20.0f;
+    int fadeLengthInSamples;
+
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ApDroneProjectAudioProcessor)

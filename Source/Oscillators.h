@@ -47,6 +47,11 @@ public:
 		phase = p;
 	}
 
+	void incrementPhase(float inc)
+	{
+		phase += inc;
+	}
+
 private:
 	float frequency;
 	float sampleRate;
@@ -61,7 +66,7 @@ class TriOsc : public Phasor
 {
 	float output(float p) override
 	{
-		return fabsf(p - 0.5f) - 0.5f;
+		return fabsf(p - 0.5f) - 0.25f;
 	}
 };
 
@@ -71,6 +76,15 @@ class SinOsc : public Phasor
 	float output(float p) override
 	{
 		return std::sin(p * 2.0 * 3.14159);
+	}
+};
+
+//CHILD class
+class SinSqOsc : public Phasor
+{
+	float output(float p) override
+	{
+		return std::sin(p * 2.0 * 3.141592653) * std::sin(p * 2.0 * 3.141592653);
 	}
 };
 
