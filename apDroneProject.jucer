@@ -12,6 +12,7 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="qZ2Yh6" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="g6AYzh" name="Oscillators.h" compile="0" resource="0" file="Source/Oscillators.h"/>
+      <FILE id="cHxUBn" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
       <FILE id="CjWoqI" name="PluckedNote.h" compile="0" resource="0" file="Source/PluckedNote.h"/>
       <FILE id="mjwXiT" name="PluckedNote.cpp" compile="1" resource="0" file="Source/PluckedNote.cpp"/>
       <FILE id="eOxBcf" name="GenerativePlucks.cpp" compile="1" resource="0"

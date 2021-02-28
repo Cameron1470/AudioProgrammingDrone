@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "Oscillators.h"
 #include "GenerativePlucks.h"
+#include "DelayLine.h"
 
 //==============================================================================
 /**
@@ -87,7 +88,9 @@ private:
     juce::Reverb::Parameters pluckedVerbParams;
 
     /// Gain reduction of Karplus-Strong Notes
-    float ksGain = 0.6f;
+    float ksGain = 0.3f;
+
+    DelayLine delayedPlucks;
 
     //==========================================
     // Swell Variables

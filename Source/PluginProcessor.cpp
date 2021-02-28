@@ -10,6 +10,7 @@
 #include "PluginEditor.h"
 #include "GenerativePlucks.h"
 #include <iostream>
+#include "DelayLine.h"
 
 //==============================================================================
 ApDroneProjectAudioProcessor::ApDroneProjectAudioProcessor()
@@ -133,6 +134,9 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
     pluckedVerb.setParameters(pluckedVerbParams);
     pluckedVerb.reset();
 
+    delayedPlucks.setSizeInSamples(int(10.0f * sampleRate));
+    delayedPlucks.setDelayTimeInSamples(int(0.3f * sampleRate));
+
     //====================================================================================
     // Swell Initializing
     
@@ -226,13 +230,22 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
         float genPlucks = pluckedNotes.processChord();  // get next sample of plucked notes
 
-        leftChannel[i] = genPlucks * ksGain;            // add to left channel with gain reduction
-        rightChannel[i] = genPlucks * ksGain;           // add to right channel with gain redution
+        if (fadeCounter < fadeLengthInSamples)
+        {
+            delayedPlucks.process(genPlucks);
+            leftChannel[i] = genPlucks * ksGain;           
+            rightChannel[i] = genPlucks * ksGain;
+        }
+        else
+        {
+        leftChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;   
+        rightChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;
+        }
+            
     }
 
     // apply reverb only to the plucked note sounds
     pluckedVerb.processStereo(leftChannel, rightChannel, numSamples);
-
 
     //==============================================
     // DSP LOOP (without reverb!)
@@ -278,7 +291,7 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
         // add bass and panned swells to the channel pointers
         leftChannel[i] += (bassMaster + leftSwellSum) * gain;
         rightChannel[i] += (bassMaster + rightSwellSum) * gain;
-
+        
         //==========================================
         // FADE IN
 
