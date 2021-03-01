@@ -53,15 +53,22 @@ public:
 	}
 
 private:
+	/// frequency variable
 	float frequency;
+
+	/// sample rate variable
 	float sampleRate;
+
+	/// phase variable
 	float phase = 0.0f;
+
+	/// phase delta increment
 	float phaseDelta;
 };
 
 //=======================================
 
-//CHILD class
+//CHILD class, Triangle Oscillator
 class TriOsc : public Phasor
 {
 	float output(float p) override
@@ -70,7 +77,7 @@ class TriOsc : public Phasor
 	}
 };
 
-//CHILD class
+//CHILD class, Sinusoid Oscillator
 class SinOsc : public Phasor
 {
 	float output(float p) override
@@ -79,7 +86,7 @@ class SinOsc : public Phasor
 	}
 };
 
-//CHILD class
+//CHILD class, Sin^2 Oscillator
 class SinSqOsc : public Phasor
 {
 	float output(float p) override
@@ -89,15 +96,15 @@ class SinSqOsc : public Phasor
 };
 
 //CHILD class
-//class Sin12Osc : public Phasor
-//{
-//	float output(float p) override
-//	{
-//		return pow(std::sin(p * 2.0 * 3.141592653), 12);
-//	}
-//};
+class Sin12Osc : public Phasor
+{
+	float output(float p) override
+	{
+		return pow(std::sin(p * 2.0 * 3.141592653), 12);
+	}
+};
 
-//CHILD class
+//CHILD class, Square Oscillator
 class SquareOsc : public Phasor
 {
 	float output(float p) override
@@ -114,5 +121,6 @@ class SquareOsc : public Phasor
 	}
 
 private:
+	// puslewidth variable
 	float pulseWidth = 0.5f;
 };

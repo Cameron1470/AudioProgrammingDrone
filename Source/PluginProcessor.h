@@ -118,6 +118,8 @@ private:
     /// Modulation of amplitude modulation frequency, triangle shaped
     TriOsc swellAmpMod;
 
+    Sin12Osc feedbackAmp;
+
     //==========================================
     // Fade In Variables
 

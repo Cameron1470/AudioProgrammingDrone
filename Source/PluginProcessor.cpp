@@ -136,6 +136,10 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
 
     delayedPlucks.setSizeInSamples(int(10.0f * sampleRate));
     delayedPlucks.setDelayTimeInSamples(int(0.3f * sampleRate));
+    delayedPlucks.setFeedback(0.0f);
+
+    feedbackAmp.setSampleRate(sampleRate);
+    feedbackAmp.setFrequency(1.0f / 120.0f);
 
     //====================================================================================
     // Swell Initializing
@@ -143,11 +147,11 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
     for (int i = 0; i < swellComponents; ++i)
     {
         swellOne[i].setSampleRate(sampleRate);
-        swellOne[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(36.0f) + ((float)-0.25f * (float)i));
+        swellOne[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(36.0f) + ((float)-2.5f * (float)i));
         swellTwo[i].setSampleRate(sampleRate);
-        swellTwo[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(55.0f) + ((float)-1.0f * (float)i));
+        swellTwo[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(55.0f) + ((float)-1.25f * (float)i));
         swellThree[i].setSampleRate(sampleRate);
-        swellThree[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(24.0f) + ((float)-0.125f * (float)i));
+        swellThree[i].setFrequency(juce::MidiMessage::getMidiNoteInHertz(24.0f) + ((float)-0.425f * (float)i));
         
         swellTwoPhaseMod[i].setSampleRate(sampleRate);
     }
@@ -157,7 +161,7 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
 
     swellAmpMod.setSampleRate(sampleRate);
 
-    swellAmpMod.setFrequency(1.0f / 480.0f);
+    swellAmpMod.setFrequency(1.0f / (60.0f * sampleRate));
     swellAmpMod.setPhase(0.5f);
 
     // Fade In Initializing
@@ -243,6 +247,9 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
             // now adding to output signal
             leftChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;   
             rightChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;
+
+            float feedbackLevel = 0.9f * feedbackAmp.process();
+            delayedPlucks.setFeedback(feedbackLevel);
         }
             
     }

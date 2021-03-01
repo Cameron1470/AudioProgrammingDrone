@@ -42,12 +42,14 @@ public:
     /// Input new value to buffer, returns output from delay
     float process(float inputSample)
     {
-        buffer[writePos] = inputSample;                 //update buffer with new input sample
+        float outputVal = buffer[readPos];              // read output value from read position of buffer
+        
+        buffer[writePos] = inputSample + outputVal * feedback;   //update buffer with new input sample + feedback
 
         writePos += 1;                                  // increment write position
         writePos %= size;                               // loop back around to zero if off the end of buffer
 
-        float outputVal = buffer[readPos];              // read output value from read position of buffer
+        
 
         readPos += 1;                                   // increment read position
         readPos %= size;                                // loop back around to zero if off the end of buffer
