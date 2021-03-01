@@ -3,7 +3,7 @@
 
     GenerativePlucks.h
     Created: 26 Feb 2021 1:42:25pm
-    Author:  csmit
+    Author:  Cameron Smith, UoE 1338237
 
   ==============================================================================
 */
@@ -28,7 +28,7 @@ public:
 #pragma mark getters and setters
 
     /// setter function for frequency
-    /// @param freq, frequency of output note
+    /// @param Midi value, Midi note value of output note
     void setMidiNotes(int* midiNoteValues);
     /// setter function for sample rate
     /// @param SR, sample rate in Hz
@@ -40,17 +40,23 @@ public:
 private:
     /// frequency of plucked note variable
     std::vector<PluckedNote> plucks;
+    
     /// number of note that make up the vector
     int noteCount = 5;
 
-    float* frequencies = new float[noteCount];
-    bool* noteStatus = new bool[noteCount];
-    float* pause = new float[noteCount];
-    float* timeStop = new float[noteCount];
+    /// pointer array for storing frequency values
+    float* frequencies = new float[noteCount];          
 
-    float sumSample = 0;
+    /// pointer array for storing on/off status of notes
+    bool* noteStatus = new bool[noteCount];             
+    
+    /// pointer array for storing pause time between notes
+    float* pause = new float[noteCount];                
+    
+    /// pointer array for storing stop times for notes
+    float* timeStop = new float[noteCount];                                         
 
-    juce::Random chance;
-
+    /// random object for chance values
+    juce::Random chance;                                
 };
 

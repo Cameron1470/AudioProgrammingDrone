@@ -230,16 +230,19 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
         float genPlucks = pluckedNotes.processChord();  // get next sample of plucked notes
 
+        // waiting for fade in to finish before introducing delay
         if (fadeCounter < fadeLengthInSamples)
         {
+            // still processing and adding to delay buffer but not not adding to output signal
             delayedPlucks.process(genPlucks);
             leftChannel[i] = genPlucks * ksGain;           
             rightChannel[i] = genPlucks * ksGain;
         }
         else
         {
-        leftChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;   
-        rightChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;
+            // now adding to output signal
+            leftChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;   
+            rightChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;
         }
             
     }
