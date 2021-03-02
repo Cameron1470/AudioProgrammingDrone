@@ -114,9 +114,12 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
     ampModTwo.setFrequency(0.5f);
     ampModTwo.setPhase(0.5f);
 
+    bassOscThree.setSampleRate(sampleRate);
+    bassOscThree.setFrequency(juce::MidiMessage::getMidiNoteInHertz(24.0f));
+
     //===================================================================================
     // Plucked Notes Initializing
-    int* midiNoteValues = new int[10];
+    int* midiNoteValues = new int[5];
     midiNoteValues[0] = 51;
     midiNoteValues[1] = 55;
     midiNoteValues[2] = 58;
@@ -141,6 +144,12 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
     feedbackAmp.setSampleRate(sampleRate);
     feedbackAmp.setFrequency(1.0f / 120.0f);
 
+    cutOffMod.setSampleRate(sampleRate);
+    cutOffMod.setFrequency(1.0f / 20.0f);
+
+    filter.setCoefficients(juce::IIRCoefficients::makeHighPass(sampleRate, 5000.0));
+    filter.reset();
+
     //====================================================================================
     // Swell Initializing
     
@@ -161,7 +170,7 @@ void ApDroneProjectAudioProcessor::prepareToPlay (double sampleRate, int samples
 
     swellAmpMod.setSampleRate(sampleRate);
 
-    swellAmpMod.setFrequency(1.0f / (60.0f * sampleRate));
+    swellAmpMod.setFrequency(1.0f / 60.0f);
     swellAmpMod.setPhase(0.5f);
 
     // Fade In Initializing
@@ -244,15 +253,22 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
         }
         else
         {
-            // now adding to output signal
-            leftChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;   
-            rightChannel[i] = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;
-
-            float feedbackLevel = 0.9f * feedbackAmp.process();
+            
+            float feedbackLevel = 0.7f * feedbackAmp.process();
             delayedPlucks.setFeedback(feedbackLevel);
+            
+            // now adding to output signal
+            float currentSamp = (genPlucks + delayedPlucks.process(genPlucks)) * ksGain;
+
+            filter.setCoefficients(juce::IIRCoefficients::makeLowPass(getSampleRate(), 5000.0 + (4900.0 * cutOffMod.process())));
+
+            leftChannel[i] = filter.processSingleSampleRaw(currentSamp);   
+            rightChannel[i] = filter.processSingleSampleRaw(currentSamp);
         }
             
     }
+
+
 
     // apply reverb only to the plucked note sounds
     pluckedVerb.processStereo(leftChannel, rightChannel, numSamples);
@@ -271,7 +287,7 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
         bassOscOne.setFrequency(juce::MidiMessage::getMidiNoteInHertz(48.0f) + 3.0 * modTwo);
 
         // Combine two bass note into master variable
-        float bassMaster = modOne * bassOscOne.process() + modTwo * bassOscTwo.process();
+        float bassMaster = modOne * bassOscOne.process() + modTwo * bassOscTwo.process() + 0.5 * bassOscThree.process();
 
 
         //==========================================
@@ -292,7 +308,7 @@ void ApDroneProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
         // update frequencies of amplitude modulation for both channels (notice different peak frequencies!)
         swellAmpLeft.setFrequency(0.01f + 0.99f * (0.25 + swellAmpMod.process()));
-        swellAmpRight.setFrequency(0.01f + 0.90f * (0.25 + swellAmpMod.process()));
+        swellAmpRight.setFrequency(0.01f + 0.95f * (0.25 + swellAmpMod.process()));
         
         // modulate amplitudes of both channels
         leftSwellSum *= swellAmpLeft.process() * 0.05f;

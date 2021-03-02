@@ -73,7 +73,9 @@ private:
     SinOsc ampModOne;            
 
     /// Amplitude modulator two, triangle shaped
-    TriOsc ampModTwo;               
+    TriOsc ampModTwo;    
+
+    TriOsc bassOscThree;
     
     //==========================================
     // Plucked Note Variables
@@ -91,6 +93,18 @@ private:
     float ksGain = 0.3f;
 
     DelayLine delayedPlucks;
+
+    /// Modulator for cut off frequency of filter
+    SinOsc cutOffMod;
+
+    /// IIR Filter
+    juce::IIRFilter filter;
+
+    /// IIR Filter Coefficients
+    juce::IIRCoefficients filterCoefs;
+
+    /// Oscillator for modulating feedback amount
+    Sin12Osc feedbackAmp;
 
     //==========================================
     // Swell Variables
@@ -118,7 +132,7 @@ private:
     /// Modulation of amplitude modulation frequency, triangle shaped
     TriOsc swellAmpMod;
 
-    Sin12Osc feedbackAmp;
+    
 
     //==========================================
     // Fade In Variables

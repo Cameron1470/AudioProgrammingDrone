@@ -82,7 +82,7 @@ class SinOsc : public Phasor
 {
 	float output(float p) override
 	{
-		return std::sin(p * 2.0 * 3.14159);
+		return std::sin(p * 2.0 * 3.141592653589);
 	}
 };
 
@@ -91,7 +91,7 @@ class SinSqOsc : public Phasor
 {
 	float output(float p) override
 	{
-		return std::sin(p * 2.0 * 3.141592653) * std::sin(p * 2.0 * 3.141592653);
+		return std::sin(p * 2.0 * 3.141592653589) * std::sin(p * 2.0 * 3.141592653589);
 	}
 };
 
@@ -103,6 +103,16 @@ class Sin12Osc : public Phasor
 		return pow(std::sin(p * 2.0 * 3.141592653), 12);
 	}
 };
+
+//CHILD class
+class SawOsc : public Phasor
+{
+	float output(float p) override
+	{
+		return 1.0f - (p * 1.0f);
+	}
+};
+
 
 //CHILD class, Square Oscillator
 class SquareOsc : public Phasor
